@@ -20,10 +20,9 @@ public class Test1Application implements CommandLineRunner {
     public void run(String... args) throws Exception {
         RestTemplate restTemplate = new RestTemplate();
 
-        // 1️⃣ Generate Webhook
         String url = "https://bfhldevapigw.healthrx.co.in/hiring/generateWebhook/JAVA";
         Map<String, String> request = new HashMap<>();
-        request.put("name", "Lalit Aditya M");
+        request.put("name", "M Lalit Aditya");
         request.put("regNo", "22BCE3235");
         request.put("email", "workharderlalit@gmail.com");
 
@@ -41,8 +40,7 @@ public class Test1Application implements CommandLineRunner {
         System.out.println("Webhook URL: " + webhookUrl);
         System.out.println("Access Token: " + accessToken);
 
-        // 2️⃣ Prepare SQL query
-        String finalQuery = "SELECT p.AMOUNT AS SALARY, " +
+        String query = "SELECT p.AMOUNT AS SALARY, " +
                 "CONCAT(e.FIRST_NAME, ' ', e.LAST_NAME) AS NAME, " +
                 "TIMESTAMPDIFF(YEAR, e.DOB, CURDATE()) AS AGE, " +
                 "d.DEPARTMENT_NAME " +
@@ -53,18 +51,16 @@ public class Test1Application implements CommandLineRunner {
                 "ORDER BY p.AMOUNT DESC " +
                 "LIMIT 1;";
 
-        // 3️⃣ Prepare headers and body
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(accessToken);
 
         Map<String, String> body = new HashMap<>();
-        body.put("finalQuery", finalQuery);
+        body.put("finalQuery", query);
 
         HttpEntity<Map<String, String>> entity = new HttpEntity<>(body, headers);
 
-        // 4️⃣ Submit SQL query to webhook
         ResponseEntity<String> submitResponse = restTemplate.postForEntity(webhookUrl, entity, String.class);
-        System.out.println("📤 Submission Response: " + submitResponse.getBody());
+        System.out.println("Submission Response: " + submitResponse.getBody());
     }
 }
